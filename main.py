@@ -2,6 +2,7 @@ from colorama import init as colorama_init, Fore
 from openpyxl import load_workbook
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+import random
 
 
 def match_people():
@@ -28,21 +29,42 @@ def match_people():
             return
 
     print(Fore.GREEN + "Dimensions calculated successfully. Beginning pairing process...")
-    people_dict = {}
+    exclusion_dict = {}
     for row in sheet.rows:
-        people_dict[row[0].value] = []
+        exclusion_dict[row[0].value] = []
         for cell in row[1:]:
             if cell.value is not None:
-                people_dict[row[0].value].append(cell.value)
+                exclusion_dict[row[0].value].append(cell.value)
     wb.close()
 
-    individuals = list(people_dict.keys())
+    individuals = list(exclusion_dict.keys())
     if len(individuals) > len(set(individuals)):
         print(Fore.RED + "Error: There are duplicate individuals in the 'A' column."
                          "If you have multiple exclusions, please put them all on the same row. Exiting...")
         return
     print("People to pair: " + str(individuals))
-    print("People with exclusions: " + str(people_dict))
+    print("Exclusions: " + str(exclusion_dict))
+
+    is_valid = False
+    pairs_dict = {}
+
+    while not is_valid:
+        is_valid = True
+        pairs_dict = {}
+        individuals_to_randomize = individuals.copy()
+        random.shuffle(individuals_to_randomize)
+
+        for i in range(len(individuals)):
+            if individuals[i] == individuals_to_randomize[i] or individuals_to_randomize[i] in exclusion_dict[individuals[i]]:
+                is_valid = False
+            pairs_dict[individuals[i]] = individuals_to_randomize[i]
+
+        if not is_valid:
+            print(Fore.YELLOW + "Warning: Invalid pairs selected. Trying again...")
+
+    print("Shuffled Pairs: " + str(pairs_dict))
+
+    input("Press Enter to continue...")
 
 
 if __name__ == '__main__':
