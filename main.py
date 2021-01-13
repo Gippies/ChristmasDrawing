@@ -4,7 +4,7 @@ from openpyxl import load_workbook
 def match_people():
     wb = load_workbook("TestFile.xlsx")
     sheet = wb.worksheets[0]
-    print(sheet['A5'].value)
+    print(sheet.cell(row=1, column=1).value)
 
 
 if __name__ == '__main__':
