@@ -31,6 +31,10 @@ def match_people():
     print(Fore.GREEN + "Dimensions calculated successfully. Beginning pairing process...")
     exclusion_dict = {}
     for row in sheet.rows:
+        if row[0].value in exclusion_dict.keys():
+            print(Fore.RED + "Error: There are duplicate individuals in the 'A' column. "
+                             "If you have multiple exclusions, please put them all on the same row. Exiting...")
+            return
         exclusion_dict[row[0].value] = []
         for cell in row[1:]:
             if cell.value is not None:
@@ -38,10 +42,6 @@ def match_people():
     wb.close()
 
     individuals = list(exclusion_dict.keys())
-    if len(individuals) > len(set(individuals)):
-        print(Fore.RED + "Error: There are duplicate individuals in the 'A' column."
-                         "If you have multiple exclusions, please put them all on the same row. Exiting...")
-        return
     print("People to pair: " + str(individuals))
     print("Exclusions: " + str(exclusion_dict))
 
@@ -70,15 +70,18 @@ def match_people():
         defaultextension=[('Excel Files', '*.xlsx'), ('All Files', '*.*')]
     )
 
+    if fn_to_save == '':
+        print(Fore.RED + "No save file specified. Exiting...")
+        return
+
     wb = Workbook(write_only=True)
     ws = wb.create_sheet()
     for k, v in pairs_dict.items():
         ws.append([k, v])
     wb.save(fn_to_save)
 
-    input("Press Enter to continue...")
-
 
 if __name__ == '__main__':
     colorama_init(autoreset=True)
     match_people()
+    input("Press Enter to continue...")
