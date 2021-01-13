@@ -34,6 +34,7 @@ def match_people():
         for cell in row[1:]:
             if cell.value is not None:
                 people_dict[row[0].value].append(cell.value)
+    wb.close()
 
     individuals = list(people_dict.keys())
     if len(individuals) > len(set(individuals)):
@@ -42,7 +43,6 @@ def match_people():
         return
     print("People to pair: " + str(individuals))
     print("People with exclusions: " + str(people_dict))
-    wb.close()
 
 
 if __name__ == '__main__':
