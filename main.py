@@ -23,7 +23,7 @@ def match_people():
         try:
             sheet.calculate_dimension(force=True)
         except UnboundLocalError:
-            print(Fore.RED + "It appears you may be using an empty (or very broken) Excel spreadsheet."
+            print(Fore.RED + "Error: It appears you may be using an empty (or very broken) Excel spreadsheet."
                   "Try adding some data or using one that's not broken. Exiting...")
             return
 
@@ -36,6 +36,10 @@ def match_people():
                 people_dict[row[0].value].append(cell.value)
 
     individuals = list(people_dict.keys())
+    if len(individuals) > len(set(individuals)):
+        print(Fore.RED + "Error: There are duplicate individuals in the 'A' column."
+                         "If you have multiple exclusions, please put them all on the same row. Exiting...")
+        return
     print("People to pair: " + str(individuals))
     print("People with exclusions: " + str(people_dict))
     wb.close()
