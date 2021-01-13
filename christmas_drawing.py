@@ -1,13 +1,13 @@
 from colorama import init as colorama_init, Fore
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 from tkinter import Tk
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 import random
 
 
 def match_people():
     Tk().withdraw()
-    fn = askopenfilename(title="Select an Excel file", filetypes=(("Excel Files", "*.xlsx*"), ("All Files", "*.*")))
+    fn = askopenfilename(title="Select an Excel file", filetypes=(("Excel Files", "*.xlsx"), ("All Files", "*.*")))
 
     if fn == '':
         print(Fore.RED + "No file selected. Exiting...")
@@ -63,6 +63,18 @@ def match_people():
             print(Fore.YELLOW + "Warning: Invalid pairs selected. Trying again...")
 
     print("Shuffled Pairs: " + str(pairs_dict))
+    print("Writing to file...")
+
+    fn_to_save = asksaveasfilename(
+        filetypes=[('Excel Files', '*.xlsx'), ('All Files', '*.*')],
+        defaultextension=[('Excel Files', '*.xlsx'), ('All Files', '*.*')]
+    )
+
+    wb = Workbook(write_only=True)
+    ws = wb.create_sheet()
+    for k, v in pairs_dict.items():
+        ws.append([k, v])
+    wb.save(fn_to_save)
 
     input("Press Enter to continue...")
 
